@@ -1667,7 +1667,7 @@ Esses comandos representam as principais etapas utilizadas para
 analisados no relatório.
 
 
-#  Referências bibliográficas
+#  Referências bibliograficas 
 
 
 BENÊVIDE, B. **Probabilidade e Estatística – PROFMAT/CA/UFSJ**. Universidade Federal de São João del-Rei, 2026. Disponível em: https://bendeivide.github.io/courses/profmat-probest/normal2026.2/. Acesso em: 14 set. 2026.
