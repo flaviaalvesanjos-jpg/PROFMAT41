@@ -1,7 +1,7 @@
 ---
 title: "Relatório 4: conceitos, definições, propriedades e aplicações de Estatística"
 author: "Flávia Alves"
-date: "23/09/2026"
+date: "24/09/2026"
 output:
   html_document:
     toc: true
