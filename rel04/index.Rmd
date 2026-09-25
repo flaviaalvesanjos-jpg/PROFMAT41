@@ -19,7 +19,7 @@ output:
 
 A probabilidade está presente em diversas situações do nosso cotidiano. Quando analisamos a possibilidade de chover, avaliamos os resultados de um jogo, interpretamos uma pesquisa ou tentamos compreender a chance de determinado acontecimento ocorrer, estamos, de alguma forma, utilizando ideias relacionadas à probabilidade.
 
-Apesar de muitas vezes utilizarmos expressões como “é provável”, “é impossível” ou “há pouca chance” de maneira intuitiva, o estudo matemático da probabilidade permite transformar essas ideias em conceitos precisos. Dessa forma, torna-se possível analisar situações de incerteza utilizando modelos matemáticos, cálculos e argumentos lógicos.
+Apesar de muitas vezes utilizarmos expressões como “é provável”, “é impossível” ou “há pouca chance” de maneira intuitiva, o estudo matemático da probabilidade permite transformar essas ideias em conceitos precisos. Dessa forma, torna-se possível analisar situações de incerteza utilizando modelos matemáticos, cálculos e argumento lógico.
 
 Neste relatório, apresento os principais conceitos relacionados à probabilidade, partindo das ideias básicas de conjuntos e chegando a resultados importantes, como o Teorema da Probabilidade Total e o Teorema de Bayes. A intenção não é apenas apresentar fórmulas, mas compreender de onde elas surgem, como podem ser demonstradas e em quais situações podem ser utilizadas.
 
