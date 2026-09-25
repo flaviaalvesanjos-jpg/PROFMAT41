@@ -1,37 +1,923 @@
 ---
-title: "Relatório 02 - Como usar o projeto Relatórios"
-author: "Ben Dêivide"
-date: "12/04/2022"
-header-includes:
-  - \usepackage{titling}
-  - \pretitle{\begin{center}
-    \includegraphics[width=2in,height=2in]{ufsj.png}\LARGE\\}
-  - \posttitle{\end{center}}
-toc-title: "Sumário"
+title: "Relatório 2 – Análise Estatística"
+author: "Flávia Alves"
+date: "01/09/2026"
 output:
-  bookdown::html_document2: 
-    theme: journal
-    highlight: tango
-    toc: yes
-    number_sections: yes
-    includes:
-      in_header: logo.html
-  pdf_document:
-    
-    toc: yes
-    number_sections: yes
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
 ---
+<img src="ufsj.png" alt="Logo UFSJ"
+style="position: absolute; top: 80px; right: 40px; width: 180px;">
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+# 1. Introdução
+
+Este relatório apresenta uma análise estatística de um banco de dados composto por 1.000 alunos de uma escola pública brasileira.
+
+O banco de dados foi construído para proporcionar uma experiência prática de análise estatística, envolvendo informações relacionadas à frequência escolar, ao desempenho acadêmico e a características sociofamiliares dos estudantes.
+
+São analisadas cinco variáveis: número de faltas, nota média, turno de estudo, escolaridade da mãe e acesso à internet em casa.
+
+O objetivo deste trabalho é explorar os dados, realizar análises univariadas, bivariadas e multivariadas e responder às questões investigativas propostas, buscando identificar possíveis relações entre as características dos estudantes e seu desempenho escolar.
+
+# 2. Banco de dados
+
+O banco de dados utilizado neste relatório é o arquivo `dados_alunos.csv`.
+
+As cinco variáveis analisadas são:
+
+- **Faltas:** número de ausências do aluno durante o ano letivo;
+- **Nota média:** desempenho acadêmico médio do aluno;
+- **Turno:** período em que o aluno estuda;
+- **Escolaridade da mãe:** nível de escolaridade da mãe;
+- **Acesso à internet:** existência ou não de acesso à internet em casa.
+
+Segundo as orientações da atividade, as variáveis são classificadas da seguinte forma:
+
+- Faltas: quantitativa discreta;
+- Nota média: quantitativa contínua;
+- Turno: qualitativa nominal;
+- Escolaridade da mãe: qualitativa ordinal;
+- Acesso à internet: qualitativa nominal.
+
+## 2.1 Importação dos dados
+
+O banco de dados utiliza ponto e vírgula como separador entre as colunas e vírgula como separador decimal.
+
+O arquivo `dados_alunos.csv` deve estar na mesma pasta do arquivo `index.Rmd`.
+
+```{r importacao}
+arquivos_possiveis <- c("dados_alunos.csv", "dados_alunos (1).csv")
+arquivos_possiveis <- arquivos_possiveis[file.exists(arquivos_possiveis)]
+
+if (length(arquivos_possiveis) == 0) {
+  stop("Nenhum arquivo de dados foi encontrado na pasta do relatório.")
+}
+
+arquivo_dados <- NULL
+
+for (arq in arquivos_possiveis) {
+  primeira_linha <- tryCatch(
+    readLines(arq, n = 1, warn = FALSE),
+    error = function(e) ""
+  )
+
+  if (grepl("faltas", primeira_linha, ignore.case = TRUE) &&
+      grepl("nota_media", primeira_linha, ignore.case = TRUE) &&
+      grepl("turno", primeira_linha, ignore.case = TRUE) &&
+      grepl("escolaridade_mae", primeira_linha, ignore.case = TRUE) &&
+      grepl("acesso_internet", primeira_linha, ignore.case = TRUE)) {
+    arquivo_dados <- arq
+    break
+  }
+}
+
+if (is.null(arquivo_dados)) {
+  stop("Nenhum dos arquivos CSV encontrados possui as colunas esperadas.")
+}
+
+dados_alunos <- read.csv2(
+  arquivo_dados,
+  header = TRUE,
+  sep = ";",
+  dec = ",",
+  stringsAsFactors = FALSE,
+  check.names = FALSE
+)
+
+dados_alunos$faltas <- as.numeric(dados_alunos$faltas)
+dados_alunos$nota_media <- as.numeric(dados_alunos$nota_media)
+
+if (!all(c(
+  "faltas",
+  "nota_media",
+  "turno",
+  "escolaridade_mae",
+  "acesso_internet"
+) %in% names(dados_alunos))) {
+  stop("As colunas esperadas não foram encontradas.")
+}
 ```
---- 
 
-# Objetivo
+## 2.2 Verificação inicial do banco
 
-Descrever como realizar os relatórios.
+As primeiras linhas do banco de dados são apresentadas abaixo.
 
-# Apresentação do relatório
+```{r primeiras-linhas}
+head(dados_alunos)
+```
 
-Aqui será o local para apresentar o material sobre o relatório.
+A dimensão do banco é:
 
+```{r dimensao}
+dim(dados_alunos)
+```
+
+Os nomes das variáveis são:
+
+```{r nomes-variaveis}
+names(dados_alunos)
+```
+
+Também será realizada uma verificação da estrutura dos dados.
+
+```{r estrutura}
+str(dados_alunos)
+```
+
+O banco possui `r nrow(dados_alunos)` alunos e `r ncol(dados_alunos)` variáveis.
+
+Será verificada também a existência de valores ausentes.
+
+```{r valores-ausentes}
+colSums(is.na(dados_alunos))
+```
+
+# 3. Análise Univariada
+
+A análise univariada consiste em estudar cada variável individualmente.
+
+## 3.1 Número de faltas
+
+A variável faltas representa o número de ausências de cada aluno durante o ano letivo. Trata-se de uma variável quantitativa discreta.
+
+### Medidas estatísticas
+
+```{r resumo-faltas}
+summary(dados_alunos$faltas)
+```
+
+A média de faltas é:
+
+```{r media-faltas}
+mean(dados_alunos$faltas, na.rm = TRUE)
+```
+
+A mediana é:
+
+```{r mediana-faltas}
+median(dados_alunos$faltas, na.rm = TRUE)
+```
+
+O desvio-padrão é:
+
+```{r desvio-faltas}
+sd(dados_alunos$faltas, na.rm = TRUE)
+```
+
+O menor e o maior número de faltas são:
+
+```{r extremos-faltas}
+min(dados_alunos$faltas, na.rm = TRUE)
+max(dados_alunos$faltas, na.rm = TRUE)
+```
+
+A média de faltas observada foi de **`r round(mean(dados_alunos$faltas, na.rm = TRUE), 2)` faltas**.
+
+A mediana foi de **`r round(median(dados_alunos$faltas, na.rm = TRUE), 2)` faltas**.
+
+O menor número de faltas observado foi **`r min(dados_alunos$faltas, na.rm = TRUE)`**, enquanto o maior foi **`r max(dados_alunos$faltas, na.rm = TRUE)`**.
+
+### Distribuição das faltas
+
+```{r histograma-faltas}
+hist(
+  dados_alunos$faltas,
+  main = "Distribuição do Número de Faltas",
+  xlab = "Número de faltas",
+  ylab = "Quantidade de alunos"
+)
+```
+
+O histograma permite observar a distribuição do número de faltas entre os alunos.
+
+## 3.2 Nota média
+
+A nota média representa o desempenho acadêmico dos estudantes e é uma variável quantitativa contínua.
+
+### Medidas estatísticas
+
+```{r resumo-nota}
+summary(dados_alunos$nota_media)
+```
+
+A média das notas é:
+
+```{r media-nota}
+mean(dados_alunos$nota_media, na.rm = TRUE)
+```
+
+A mediana é:
+
+```{r mediana-nota}
+median(dados_alunos$nota_media, na.rm = TRUE)
+```
+
+O desvio-padrão é:
+
+```{r desvio-nota}
+sd(dados_alunos$nota_media, na.rm = TRUE)
+```
+
+O menor e o maior valor são:
+
+```{r extremos-nota}
+min(dados_alunos$nota_media, na.rm = TRUE)
+max(dados_alunos$nota_media, na.rm = TRUE)
+```
+
+A nota média geral dos alunos foi de **`r round(mean(dados_alunos$nota_media, na.rm = TRUE), 2)` pontos**.
+
+A mediana foi de **`r round(median(dados_alunos$nota_media, na.rm = TRUE), 2)` pontos**.
+
+A menor nota observada foi **`r min(dados_alunos$nota_media, na.rm = TRUE)`**, enquanto a maior foi **`r max(dados_alunos$nota_media, na.rm = TRUE)`**.
+
+### Distribuição das notas
+
+```{r histograma-notas}
+hist(
+  dados_alunos$nota_media,
+  main = "Distribuição das Notas Médias",
+  xlab = "Nota média",
+  ylab = "Quantidade de alunos"
+)
+```
+
+O histograma permite visualizar como as notas estão distribuídas entre os estudantes.
+
+## 3.3 Turno de estudo
+
+A variável turno é qualitativa nominal e possui as categorias Matutino, Vespertino e Noturno.
+
+### Frequência
+
+```{r frequencia-turno}
+table(dados_alunos$turno)
+```
+
+### Percentual
+
+```{r percentual-turno}
+round(prop.table(table(dados_alunos$turno)) * 100, 2)
+```
+
+### Gráfico
+
+```{r grafico-turno}
+barplot(
+  table(dados_alunos$turno),
+  main = "Distribuição dos Alunos por Turno",
+  xlab = "Turno",
+  ylab = "Quantidade de alunos"
+)
+```
+
+A análise permite verificar como os alunos estão distribuídos entre os diferentes turnos.
+
+## 3.4 Escolaridade da mãe
+
+A escolaridade da mãe é uma variável qualitativa ordinal, pois existe uma ordem natural entre as categorias Fundamental, Médio e Superior.
+
+### Frequência
+
+```{r frequencia-escolaridade}
+table(dados_alunos$escolaridade_mae)
+```
+
+### Percentual
+
+```{r percentual-escolaridade}
+round(prop.table(table(dados_alunos$escolaridade_mae)) * 100, 2)
+```
+
+### Gráfico
+
+```{r grafico-escolaridade}
+barplot(
+  table(dados_alunos$escolaridade_mae),
+  main = "Escolaridade das Mães dos Alunos",
+  xlab = "Escolaridade da mãe",
+  ylab = "Quantidade de alunos"
+)
+```
+
+A distribuição permite conhecer o nível de escolaridade das mães dos alunos participantes do estudo.
+
+## 3.5 Acesso à internet em casa
+
+A variável acesso à internet é qualitativa nominal e possui as categorias Sim e Não.
+
+### Frequência
+
+```{r frequencia-internet}
+table(dados_alunos$acesso_internet)
+```
+
+### Percentual
+
+```{r percentual-internet}
+round(prop.table(table(dados_alunos$acesso_internet)) * 100, 2)
+```
+
+### Gráfico
+
+```{r grafico-internet}
+barplot(
+  table(dados_alunos$acesso_internet),
+  main = "Acesso à Internet em Casa",
+  xlab = "Acesso à internet",
+  ylab = "Quantidade de alunos"
+)
+```
+
+A análise permite verificar a proporção de alunos que possuem ou não acesso à internet em casa.
+
+# 4. Análise Bivariada
+
+Na análise bivariada são estudadas relações entre duas variáveis.
+
+## 4.1 Acesso à internet e nota média
+
+A primeira questão investigativa procura verificar se os alunos com acesso à internet em casa apresentam notas médias significativamente maiores.
+
+Primeiramente, serão calculadas as médias das notas para os dois grupos.
+
+```{r media-internet}
+media_internet <- tapply(
+  dados_alunos$nota_media,
+  dados_alunos$acesso_internet,
+  mean,
+  na.rm = TRUE
+)
+
+round(media_internet, 2)
+```
+
+As médias serão comparadas graficamente.
+
+```{r boxplot-internet}
+boxplot(
+  nota_media ~ acesso_internet,
+  data = dados_alunos,
+  main = "Nota Média por Acesso à Internet",
+  xlab = "Acesso à internet",
+  ylab = "Nota média"
+)
+```
+
+Para verificar se a diferença entre as médias é estatisticamente significativa, será utilizado o teste t para duas amostras.
+
+```{r teste-t-internet}
+teste_internet <- t.test(
+  nota_media ~ acesso_internet,
+  data = dados_alunos
+)
+
+teste_internet
+```
+
+O valor de p é:
+
+```{r p-internet}
+teste_internet$p.value
+```
+
+Considerando um nível de significância de 5%, temos:
+
+```{r conclusao-internet}
+if (teste_internet$p.value < 0.05) {
+  cat("O valor de p é menor que 0,05. Portanto, existem evidências estatísticas de diferença entre as notas médias dos alunos com e sem acesso à internet.")
+} else {
+  cat("O valor de p é maior ou igual a 0,05. Portanto, não existem evidências estatísticas suficientes para afirmar que as notas médias dos dois grupos sejam diferentes.")
+}
+```
+
+Dessa forma, a comparação das médias juntamente com o teste t permite responder à questão sobre a relação entre acesso à internet e desempenho acadêmico.
+
+## 4.2 Escolaridade da mãe e desempenho
+
+A segunda questão investiga como a escolaridade da mãe se relaciona com o desempenho dos alunos.
+
+Serão calculadas as médias das notas para cada nível de escolaridade materna.
+
+```{r media-escolaridade}
+media_escolaridade <- tapply(
+  dados_alunos$nota_media,
+  dados_alunos$escolaridade_mae,
+  mean,
+  na.rm = TRUE
+)
+
+round(media_escolaridade, 2)
+```
+
+As distribuições das notas serão comparadas por meio de boxplot.
+
+```{r boxplot-escolaridade}
+boxplot(
+  nota_media ~ escolaridade_mae,
+  data = dados_alunos,
+  main = "Nota Média por Escolaridade da Mãe",
+  xlab = "Escolaridade da mãe",
+  ylab = "Nota média"
+)
+```
+
+Para verificar se existem diferenças estatisticamente significativas entre os grupos, será utilizada uma ANOVA.
+
+```{r anova}
+modelo_anova <- aov(
+  nota_media ~ escolaridade_mae,
+  data = dados_alunos
+)
+
+summary(modelo_anova)
+```
+
+O valor de p da ANOVA é:
+
+```{r p-anova}
+p_anova <- summary(modelo_anova)[[1]][["Pr(>F)"]][1]
+
+p_anova
+```
+
+Interpretação:
+
+```{r conclusao-anova}
+if (p_anova < 0.05) {
+  cat("O valor de p é menor que 0,05. Portanto, existem evidências estatísticas de diferença entre pelo menos dois grupos de escolaridade materna.")
+} else {
+  cat("O valor de p é maior ou igual a 0,05. Portanto, não existem evidências estatísticas suficientes de diferença entre as médias dos grupos de escolaridade materna.")
+}
+```
+
+A análise permite verificar se a escolaridade da mãe está associada a diferenças no desempenho acadêmico.
+
+## 4.3 Número de faltas e nota média
+
+A terceira questão procura verificar a relação entre frequência escolar e desempenho.
+
+Será calculado o coeficiente de correlação de Pearson.
+
+```{r correlacao}
+correlacao <- cor(
+  dados_alunos$faltas,
+  dados_alunos$nota_media,
+  use = "complete.obs"
+)
+
+correlacao
+```
+
+O coeficiente encontrado foi **`r round(correlacao, 3)`**.
+
+Para visualizar a relação entre as duas variáveis:
+
+```{r grafico-correlacao}
+plot(
+  dados_alunos$faltas,
+  dados_alunos$nota_media,
+  main = "Relação entre Número de Faltas e Nota Média",
+  xlab = "Número de faltas",
+  ylab = "Nota média"
+)
+
+abline(
+  lm(nota_media ~ faltas, data = dados_alunos)
+)
+```
+
+Também será realizado o teste de correlação.
+
+```{r teste-correlacao}
+teste_correlacao <- cor.test(
+  dados_alunos$faltas,
+  dados_alunos$nota_media
+)
+
+teste_correlacao
+```
+
+A interpretação da direção da correlação é:
+
+```{r interpretacao-correlacao}
+if (correlacao < 0) {
+  cat("A correlação é negativa. De modo geral, maiores números de faltas estão associados a menores notas médias.")
+} else if (correlacao > 0) {
+  cat("A correlação é positiva. De modo geral, maiores números de faltas estão associados a maiores notas médias.")
+} else {
+  cat("A correlação é próxima de zero, indicando pouca ou nenhuma associação linear entre faltas e nota média.")
+}
+```
+
+### Análise da intensidade da correlação
+
+```{r intensidade-correlacao}
+if (abs(correlacao) < 0.20) {
+  cat("A associação linear é muito fraca.")
+} else if (abs(correlacao) < 0.40) {
+  cat("A associação linear é fraca.")
+} else if (abs(correlacao) < 0.60) {
+  cat("A associação linear é moderada.")
+} else if (abs(correlacao) < 0.80) {
+  cat("A associação linear é forte.")
+} else {
+  cat("A associação linear é muito forte.")
+}
+```
+
+### Investigação de um possível ponto crítico
+
+Para investigar se existe uma faixa de faltas na qual o desempenho sofre uma redução mais acentuada, os alunos serão divididos em grupos.
+
+```{r faixas-faltas}
+dados_alunos$faixa_faltas <- cut(
+  dados_alunos$faltas,
+  breaks = c(-Inf, 5, 10, 15, 20, Inf),
+  labels = c(
+    "0 a 5",
+    "6 a 10",
+    "11 a 15",
+    "16 a 20",
+    "Mais de 20"
+  )
+)
+```
+
+Serão calculadas as médias das notas em cada faixa.
+
+```{r medias-faixas}
+medias_faixas <- tapply(
+  dados_alunos$nota_media,
+  dados_alunos$faixa_faltas,
+  mean,
+  na.rm = TRUE
+)
+
+round(medias_faixas, 2)
+```
+
+As médias serão apresentadas graficamente.
+
+```{r boxplot-faixas}
+boxplot(
+  nota_media ~ faixa_faltas,
+  data = dados_alunos,
+  main = "Nota Média por Faixa de Faltas",
+  xlab = "Faixa de faltas",
+  ylab = "Nota média"
+)
+```
+
+Essa comparação permite identificar se as notas apresentam redução à medida que aumenta o número de faltas.
+
+## 4.4 Turno e número de faltas
+
+A quarta questão investiga se os alunos do turno noturno apresentam maior número de faltas.
+
+Serão calculadas as médias de faltas por turno.
+
+```{r media-faltas-turno}
+media_faltas_turno <- tapply(
+  dados_alunos$faltas,
+  dados_alunos$turno,
+  mean,
+  na.rm = TRUE
+)
+
+round(media_faltas_turno, 2)
+```
+
+O resultado será apresentado por meio de um boxplot.
+
+```{r boxplot-turno-faltas}
+boxplot(
+  faltas ~ turno,
+  data = dados_alunos,
+  main = "Número de Faltas por Turno",
+  xlab = "Turno",
+  ylab = "Número de faltas"
+)
+```
+
+O turno com maior média de faltas é:
+
+```{r maior-media-faltas}
+turno_maior_falta <- names(which.max(media_faltas_turno))
+
+turno_maior_falta
+```
+
+A maior média de faltas foi de **`r round(max(media_faltas_turno, na.rm = TRUE), 2)` faltas**.
+
+## 4.5 Turno e nota média
+
+Também será analisado o desempenho dos alunos de acordo com o turno.
+
+```{r media-nota-turno}
+media_nota_turno <- tapply(
+  dados_alunos$nota_media,
+  dados_alunos$turno,
+  mean,
+  na.rm = TRUE
+)
+
+round(media_nota_turno, 2)
+```
+
+O resultado será apresentado graficamente.
+
+```{r boxplot-nota-turno}
+boxplot(
+  nota_media ~ turno,
+  data = dados_alunos,
+  main = "Nota Média por Turno",
+  xlab = "Turno",
+  ylab = "Nota média"
+)
+```
+
+O turno com maior nota média foi **`r names(which.max(media_nota_turno))`**, com média de **`r round(max(media_nota_turno, na.rm = TRUE), 2)`**.
+
+O turno com menor nota média foi **`r names(which.min(media_nota_turno))`**, com média de **`r round(min(media_nota_turno, na.rm = TRUE), 2)`**.
+
+# 5. Análise Multivariada
+
+A análise multivariada permite considerar mais de duas variáveis simultaneamente.
+
+Nesta etapa serão analisadas conjuntamente as variáveis turno, acesso à internet e nota média.
+
+## 5.1 Turno, acesso à internet e nota média
+
+Inicialmente serão calculadas as médias das notas para cada combinação de turno e acesso à internet.
+
+```{r media-conjunta}
+media_conjunta <- aggregate(
+  nota_media ~ turno + acesso_internet,
+  data = dados_alunos,
+  FUN = mean
+)
+
+media_conjunta
+```
+
+O resultado também será apresentado graficamente.
+
+```{r boxplot-conjunto}
+boxplot(
+  nota_media ~ interaction(turno, acesso_internet),
+  data = dados_alunos,
+  main = "Nota Média por Turno e Acesso à Internet",
+  xlab = "Turno e acesso à internet",
+  ylab = "Nota média"
+)
+```
+
+A análise conjunta permite observar se o comportamento das notas varia de acordo com o turno e com o acesso à internet.
+
+## 5.2 Escolaridade da mãe, acesso à internet e nota média
+
+Também será analisada conjuntamente a relação entre escolaridade da mãe, acesso à internet e nota média.
+
+```{r media-sociofamiliar}
+media_sociofamiliar <- aggregate(
+  nota_media ~ escolaridade_mae + acesso_internet,
+  data = dados_alunos,
+  FUN = mean
+)
+
+media_sociofamiliar
+```
+
+Essa análise permite verificar se diferentes condições sociofamiliares estão associadas a diferentes níveis de desempenho acadêmico.
+
+## 5.3 Modelo de regressão linear
+
+Para investigar se as variáveis sociofamiliares e o número de faltas explicam parte da variabilidade das notas, será ajustado um modelo de regressão linear.
+
+```{r regressao}
+modelo_regressao <- lm(
+  nota_media ~ faltas + escolaridade_mae + acesso_internet + turno,
+  data = dados_alunos
+)
+
+summary(modelo_regressao)
+```
+
+O modelo considera simultaneamente:
+
+- número de faltas;
+- escolaridade da mãe;
+- acesso à internet;
+- turno de estudo.
+
+O coeficiente de determinação do modelo é:
+
+```{r r-quadrado}
+summary(modelo_regressao)$r.squared
+```
+
+O valor de R² representa a proporção da variabilidade da nota média explicada conjuntamente pelas variáveis incluídas no modelo.
+
+# 6. Síntese dos resultados
+
+A análise estatística permitiu investigar diferentes aspectos do banco de dados.
+
+A média de faltas dos alunos foi de **`r round(mean(dados_alunos$faltas, na.rm = TRUE), 2)`**.
+
+A nota média geral foi de **`r round(mean(dados_alunos$nota_media, na.rm = TRUE), 2)` pontos**.
+
+A correlação entre faltas e nota média foi de **`r round(correlacao, 3)`**.
+
+O teste t permitiu verificar se existe diferença estatisticamente significativa entre as notas dos alunos com e sem acesso à internet.
+
+A ANOVA permitiu investigar possíveis diferenças nas notas de acordo com a escolaridade da mãe.
+
+A comparação entre os turnos permitiu identificar diferenças tanto no número de faltas quanto no desempenho acadêmico.
+
+A análise multivariada permitiu considerar simultaneamente diferentes características dos alunos, possibilitando uma interpretação mais ampla dos dados.
+
+# 7. Respostas às questões investigativas
+
+## Questão 1 – Relação entre infraestrutura e desempenho
+
+A questão investigou se os alunos com acesso à internet em casa apresentam notas médias significativamente maiores.
+
+As médias observadas foram:
+
+```{r resposta-q1-medias}
+round(media_internet, 2)
+```
+
+O valor de p do teste t foi **`r round(teste_internet$p.value, 4)`**.
+
+```{r resposta-q1}
+if (teste_internet$p.value < 0.05) {
+  cat("Como o valor de p é menor que 0,05, há evidências estatísticas de diferença entre as notas médias dos alunos com e sem acesso à internet.")
+} else {
+  cat("Como o valor de p é maior ou igual a 0,05, não há evidências estatísticas suficientes para afirmar que exista diferença entre as notas médias dos alunos com e sem acesso à internet.")
+}
+```
+
+Portanto, a resposta deve ser interpretada considerando tanto as médias observadas quanto o resultado do teste estatístico.
+
+## Questão 2 – Capital cultural e rendimento
+
+A escolaridade da mãe foi relacionada ao desempenho dos alunos.
+
+As médias das notas por escolaridade materna foram:
+
+```{r resposta-q2}
+round(media_escolaridade, 2)
+```
+
+O valor de p da ANOVA foi **`r round(p_anova, 4)`**.
+
+```{r conclusao-q2}
+if (p_anova < 0.05) {
+  cat("Existem evidências estatísticas de diferença entre pelo menos dois grupos de escolaridade materna.")
+} else {
+  cat("Não existem evidências estatísticas suficientes de diferença entre as médias dos grupos de escolaridade materna.")
+}
+```
+
+A análise permite verificar se existe uma relação entre escolaridade materna e rendimento acadêmico.
+
+## Questão 3 – Frequência e desempenho
+
+A correlação entre número de faltas e nota média foi de **`r round(correlacao, 3)`**.
+
+```{r resposta-q3}
+if (correlacao < 0) {
+  cat("A associação é negativa, indicando que maiores números de faltas estão associados a menores notas médias.")
+} else if (correlacao > 0) {
+  cat("A associação é positiva, indicando que maiores números de faltas estão associados a maiores notas médias.")
+} else {
+  cat("A associação linear é próxima de zero.")
+}
+```
+
+A análise por faixas de faltas foi realizada para investigar se existe uma faixa na qual o desempenho apresenta redução mais acentuada.
+
+As médias das notas por faixa foram:
+
+```{r resposta-q3-faixas}
+round(medias_faixas, 2)
+```
+
+Essa comparação permite identificar possíveis mudanças no comportamento das notas conforme aumenta o número de faltas.
+
+## Questão 4 – Perfil do aluno noturno
+
+As médias de faltas por turno foram:
+
+```{r resposta-q4}
+round(media_faltas_turno, 2)
+```
+
+O turno com maior média de faltas foi **`r turno_maior_falta`**.
+
+A maior média observada foi de **`r round(max(media_faltas_turno, na.rm = TRUE), 2)` faltas**.
+
+As médias das notas por turno foram:
+
+```{r resposta-q4-notas}
+round(media_nota_turno, 2)
+```
+
+O turno com maior nota média foi **`r names(which.max(media_nota_turno))`**.
+
+O turno com menor nota média foi **`r names(which.min(media_nota_turno))`**.
+
+Dessa maneira, é possível comparar tanto a frequência quanto o desempenho entre os diferentes turnos.
+
+## Questão 5 – Desigualdades educacionais
+
+As variáveis escolaridade da mãe e acesso à internet foram analisadas conjuntamente com a nota média.
+
+```{r resposta-q5}
+media_sociofamiliar
+```
+
+Também foi ajustado um modelo de regressão linear considerando faltas, escolaridade da mãe, acesso à internet e turno.
+
+```{r resposta-q5-modelo}
+summary(modelo_regressao)
+```
+
+O coeficiente de determinação foi:
+
+```{r resposta-q5-r2}
+summary(modelo_regressao)$r.squared
+```
+
+Esse resultado permite avaliar quanto da variabilidade das notas pode ser explicada conjuntamente pelas variáveis utilizadas no modelo.
+
+É importante destacar que uma associação estatística não significa necessariamente uma relação de causa e efeito.
+
+## Questão 6 – Análise por subgrupos
+
+Considerando conjuntamente turno e acesso à internet, foram calculadas as médias das notas.
+
+```{r resposta-q6}
+media_conjunta
+```
+
+Essa análise permite observar padrões específicos entre os diferentes subgrupos de alunos.
+
+# 8. Conclusão
+
+A análise estatística do banco de dados permitiu explorar informações de 1.000 alunos e investigar relações entre frequência escolar, desempenho acadêmico e características sociofamiliares.
+
+Na análise univariada, foram estudadas individualmente as cinco variáveis do banco. Para as variáveis quantitativas foram calculadas medidas como média, mediana e desvio-padrão. Para as variáveis qualitativas foram apresentadas frequências, percentuais e gráficos.
+
+Na análise bivariada, foram investigadas as relações entre acesso à internet e desempenho, escolaridade da mãe e nota média, número de faltas e desempenho, além das diferenças entre os turnos.
+
+A relação entre número de faltas e nota média apresentou coeficiente de correlação igual a **`r round(correlacao, 3)`**.
+
+Também foi realizada uma análise por faixas de faltas para verificar possíveis alterações mais acentuadas no desempenho conforme aumenta o número de ausências.
+
+A análise multivariada permitiu considerar simultaneamente turno, acesso à internet, escolaridade da mãe, faltas e nota média.
+
+De maneira geral, o estudo demonstra a importância da estatística para compreender fenômenos educacionais e identificar padrões nos dados.
+
+# 9. Limitações da análise
+
+A análise apresenta algumas limitações.
+
+Primeiramente, o banco de dados possui apenas cinco variáveis, portanto diversos fatores que podem influenciar o desempenho escolar não foram considerados.
+
+Além disso, as análises realizadas identificam associações entre as variáveis, mas não permitem estabelecer relações de causa e efeito.
+
+Também é importante considerar que o banco foi construído para uma situação de pesquisa simulada e, portanto, seus resultados não devem ser generalizados para todas as escolas públicas brasileiras.
+
+# 10. Possibilidades de pesquisas futuras
+
+Em pesquisas futuras, seria interessante incluir outras variáveis, como idade, série escolar, renda familiar, condições de transporte, participação dos responsáveis na vida escolar, histórico de notas, condições da escola e outras características relacionadas ao contexto educacional.
+
+A inclusão dessas informações poderia permitir análises estatísticas mais aprofundadas e contribuir para uma compreensão mais ampla dos fatores associados ao desempenho acadêmico.
+
+# 11. Considerações finais
+
+A realização deste trabalho possibilitou aplicar conceitos de estatística descritiva, análise bivariada e análise multivariada em um contexto educacional.
+
+Além de calcular medidas estatísticas e construir gráficos, foi possível interpretar os resultados e investigar questões relacionadas à frequência escolar, desempenho acadêmico e condições sociofamiliares.
+
+A utilização de testes estatísticos, correlação e regressão possibilitou ampliar a análise para além da simples descrição dos dados.
+
+Dessa forma, o trabalho demonstra que a estatística pode ser utilizada como instrumento de investigação e reflexão sobre problemas educacionais, contribuindo para uma melhor compreensão dos dados e para a tomada de decisões fundamentadas.
+
+
+# Referências bibliograficas 
+
+
+BENÊVIDE, B. **Probabilidade e Estatística – PROFMAT/CA/UFSJ**. Universidade Federal de São João del-Rei, 2026. Disponível em: https://bendeivide.github.io/courses/profmat-probest/normal2026.2/. Acesso em: 14 set. 2026.
+
+BENÊVIDE, B. **Epaec – Estatística e Probabilidade Aplicada à Educação**. Disponível em: https://bendeivide.github.io/books/epaec/. Acesso em: 14 set. 2026.
+
+OPENAI. **ChatGPT**. Ferramenta de inteligência artificial utilizada como apoio à elaboração, organização e revisão do relatório. Disponível em: https://chatgpt.com/. Acesso em: 14 set. 2026.
+
+SANTOS, Flávia Alves dos Anjos. **Relatório 2 – Análise Estatística**. 2026. Disponível em: https://flaviaalves-profmat.github.io/Relatorio/rel02/index.html. Acesso em: 14 set. 2026.
