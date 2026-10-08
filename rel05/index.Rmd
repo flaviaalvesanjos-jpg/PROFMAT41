@@ -19,7 +19,7 @@ Neste relatório, são estudadas diferentes distribuições de probabilidade, co
 
 Além dos cálculos teóricos, foram realizadas simulações utilizando a linguagem R. A intenção é comparar os resultados obtidos matematicamente com aqueles observados nas simulações e, ao mesmo tempo, refletir sobre possibilidades de utilização desses conceitos no ensino de Matemática.
 
-# 2. Objetivos
+#  Objetivos
 
 Os principais objetivos deste relatório são:
 
@@ -31,7 +31,7 @@ Os principais objetivos deste relatório são:
 * interpretar os resultados dentro do contexto escolar;
 * refletir sobre possibilidades de trabalhar Probabilidade e Estatística na Educação Básica.
 
-# 3. Metodologia
+#  Metodologia
 
 A análise foi desenvolvida utilizando a linguagem R no ambiente RStudio.
 
@@ -39,7 +39,7 @@ Foram utilizadas funções específicas das distribuições de probabilidade, co
 
 Também foram realizadas simulações computacionais para verificar, de forma prática, a aproximação entre os resultados teóricos e os resultados obtidos por amostragem aleatória.
 
-# 4. Parte 1 – Desempenho em Matemática: Distribuição Normal
+#  Parte 1 – Desempenho em Matemática: Distribuição Normal
 
 Considera-se que as notas da prova de Matemática do ENEM dos alunos de uma escola seguem uma distribuição Normal com média de 520 pontos e desvio padrão de 80 pontos.
 
@@ -51,7 +51,7 @@ $$
 
 A distribuição Normal é adequada para representar variáveis contínuas que apresentam concentração dos valores em torno de uma média.
 
-## 4.1 Probabilidade de nota inferior a 400 pontos
+##  Probabilidade de nota inferior a 400 pontos
 
 A probabilidade solicitada é:
 
@@ -71,7 +71,7 @@ O resultado é aproximadamente 0,0668.
 
 Portanto, a probabilidade é de aproximadamente **6,68%**.
 
-## 4.2 Probabilidade de nota entre 500 e 650 pontos
+##  Probabilidade de nota entre 500 e 650 pontos
 
 Deseja-se calcular:
 
@@ -90,7 +90,7 @@ O resultado é aproximadamente 0,5466.
 
 Portanto, a probabilidade é de aproximadamente **54,66%**.
 
-## 4.3 Nota correspondente aos 10% inferiores
+##  Nota correspondente aos 10% inferiores
 
 É necessário determinar o percentil 10 da distribuição.
 
@@ -103,7 +103,7 @@ O resultado é aproximadamente **417,48 pontos**.
 
 Isso significa que cerca de 10% dos alunos apresentam notas abaixo desse valor.
 
-## 4.4 Probabilidade da média de 25 alunos ser superior a 550
+##  Probabilidade da média de 25 alunos ser superior a 550
 
 Para uma amostra de 25 alunos:
 
@@ -142,7 +142,7 @@ O resultado é aproximadamente 0,0304.
 
 Portanto, a probabilidade é de aproximadamente **3,04%**.
 
-## 4.5 Simulação de 1000 notas
+## Simulação de 1000 notas
 
 ```{r}
 set.seed(123)
@@ -174,7 +174,7 @@ curve(
 
 O histograma permite observar a distribuição dos valores simulados e compará-la com a curva Normal teórica.
 
-# 5. Parte 2 – Aprovação em Olimpíadas de Matemática: Distribuição Binomial
+#  Parte 2 – Aprovação em Olimpíadas de Matemática: Distribuição Binomial
 
 Considera-se uma turma com 20 alunos inscritos na OBMEP, sendo que historicamente 25% conseguem classificação para a segunda fase.
 
@@ -186,7 +186,7 @@ $$
 
 A distribuição Binomial é adequada porque temos um número fixo de alunos e duas possibilidades principais para cada aluno: classificar ou não classificar.
 
-## 5.1 Probabilidade de nenhum aluno se classificar
+## Probabilidade de nenhum aluno se classificar
 
 ```{r}
 n_bin <- 20
@@ -205,7 +205,7 @@ O resultado é aproximadamente 0,0032.
 
 Portanto, a probabilidade é de aproximadamente **0,32%**.
 
-## 5.2 Probabilidade de no máximo 3 alunos se classificarem
+## Probabilidade de no máximo 3 alunos se classificarem
 
 ```{r}
 bin_b <- pbinom(
@@ -221,7 +221,7 @@ O resultado é aproximadamente 0,2252.
 
 Portanto, a probabilidade é de aproximadamente **22,52%**.
 
-## 5.3 Probabilidade de 8 ou mais alunos se classificarem
+##  Probabilidade de 8 ou mais alunos se classificarem
 
 ```{r}
 bin_c <- pbinom(
@@ -238,7 +238,7 @@ O resultado é aproximadamente 0,1018.
 
 Portanto, a probabilidade é de aproximadamente **10,18%**.
 
-## 5.4 Esperança e variância
+##  Esperança e variância
 
 Para uma distribuição Binomial:
 
@@ -265,7 +265,7 @@ variancia_bin
 
 A esperança é **5 alunos** e a variância é **3,75**.
 
-## 5.5 Simulação de 1000 turmas
+##  Simulação de 1000 turmas
 
 ```{r}
 set.seed(123)
@@ -292,7 +292,7 @@ barplot(
 
 A simulação permite observar como as frequências relativas se aproximam das probabilidades teóricas.
 
-# 6. Parte 3 – Evasão Escolar por Semana: Distribuição Poisson
+#  Parte 3 – Evasão Escolar por Semana: Distribuição Poisson
 
 O número de alunos que abandonam a escola por semana é modelado por uma distribuição de Poisson com média de 3 alunos por semana.
 
@@ -302,7 +302,7 @@ $$
 X \sim Poisson(3)
 $$
 
-## 6.1 Probabilidade de nenhuma evasão
+##  Probabilidade de nenhuma evasão
 
 ```{r}
 lambda <- 3
@@ -319,7 +319,7 @@ O resultado é aproximadamente 0,0498.
 
 Portanto, a probabilidade é de aproximadamente **4,98%**.
 
-## 6.2 Probabilidade de 5 ou mais evasões
+##  Probabilidade de 5 ou mais evasões
 
 ```{r}
 poi_b <- ppois(
@@ -335,7 +335,7 @@ O resultado é aproximadamente 0,1847.
 
 Portanto, a probabilidade é de aproximadamente **18,47%**.
 
-## 6.3 Probabilidade de ocorrerem entre 2 e 4 evasões
+##  Probabilidade de ocorrerem entre 2 e 4 evasões
 
 ```{r}
 poi_c <- ppois(
@@ -354,7 +354,7 @@ O resultado é aproximadamente 0,6161.
 
 Portanto, a probabilidade é de aproximadamente **61,61%**.
 
-## 6.4 Probabilidade de exatamente 7 evasões em duas semanas
+##  Probabilidade de exatamente 7 evasões em duas semanas
 
 Se a média semanal é 3, em duas semanas a média será:
 
@@ -377,7 +377,7 @@ O resultado é aproximadamente 0,1377.
 
 Portanto, a probabilidade é de aproximadamente **13,77%**.
 
-## 6.5 Esperança e variância
+##  Esperança e variância
 
 Na distribuição de Poisson:
 
@@ -402,7 +402,7 @@ variancia_poi
 
 A esperança é **3** e a variância também é **3**.
 
-# 7. Parte 4 – Tempo de Espera no Atendimento: Distribuição Exponencial
+# Parte 4 – Tempo de Espera no Atendimento: Distribuição Exponencial
 
 O tempo de espera dos responsáveis na secretaria escolar segue uma distribuição Exponencial com média de 12 minutos.
 
@@ -412,7 +412,7 @@ $$
 \lambda=\frac{1}{12}
 $$
 
-## 7.1 Probabilidade de espera superior a 20 minutos
+##  Probabilidade de espera superior a 20 minutos
 
 ```{r}
 media_exp <- 12
@@ -432,7 +432,7 @@ O resultado é aproximadamente 0,1889.
 
 Portanto, a probabilidade é de aproximadamente **18,89%**.
 
-## 7.2 Probabilidade de espera inferior a 5 minutos
+##  Probabilidade de espera inferior a 5 minutos
 
 ```{r}
 exp_b <- pexp(
@@ -447,7 +447,7 @@ O resultado é aproximadamente 0,3408.
 
 Portanto, a probabilidade é de aproximadamente **34,08%**.
 
-## 7.3 Mediana do tempo de espera
+## Mediana do tempo de espera
 
 ```{r}
 exp_c <- qexp(
@@ -460,7 +460,7 @@ exp_c
 
 A mediana é de aproximadamente **8,32 minutos**.
 
-## 7.4 Propriedade da falta de memória
+##  Propriedade da falta de memória
 
 Se o responsável já esperou 10 minutos, deseja-se calcular a probabilidade de esperar pelo menos mais 8 minutos:
 
@@ -491,7 +491,7 @@ exp_d
 
 O resultado é aproximadamente **51,34%**.
 
-## 7.5 Simulação de 1000 tempos de espera
+##  Simulação de 1000 tempos de espera
 
 ```{r}
 set.seed(123)
@@ -519,7 +519,7 @@ curve(
 )
 ```
 
-# 8. Parte 5 – Altura dos Alunos do 9º Ano: Distribuição Weibull
+#  Parte 5 – Altura dos Alunos do 9º Ano: Distribuição Weibull
 
 A altura dos alunos do 9º ano é modelada por uma distribuição Weibull com parâmetro de forma igual a 2 e escala igual a 160 cm.
 
@@ -528,8 +528,7 @@ Assim:
 $$
 X\sim Weibull(2,160)
 $$
-
-## 8.1 Probabilidade de altura inferior a 140 cm
+##  Probabilidade de altura inferior a 140 cm
 
 ```{r}
 forma_wei <- 2
@@ -549,7 +548,7 @@ O resultado é aproximadamente 0,5350.
 
 Portanto, a probabilidade é de aproximadamente **53,50%**.
 
-## 8.2 Probabilidade de altura entre 150 e 175 cm
+##  Probabilidade de altura entre 150 e 175 cm
 
 ```{r}
 wei_b <- pweibull(
@@ -570,7 +569,7 @@ O resultado é aproximadamente 0,1129.
 
 Portanto, a probabilidade é de aproximadamente **11,29%**.
 
-## 8.3 Percentil 90
+##  Percentil 90
 
 ```{r}
 wei_c <- qweibull(
@@ -584,7 +583,7 @@ wei_c
 
 O resultado é aproximadamente **242,79 cm**.
 
-## 8.4 Média e desvio padrão
+## Média e desvio padrão
 
 A média da distribuição Weibull é:
 
@@ -618,7 +617,7 @@ desvio_wei
 
 A média é aproximadamente **141,80 cm** e o desvio padrão aproximadamente **74,12 cm**.
 
-## 8.5 Função de risco
+##  Função de risco
 
 A função de risco da distribuição Weibull é:
 
@@ -652,7 +651,7 @@ plot(
 )
 ```
 
-# 9. Parte 6 – Precipitação Mensal: Distribuição Gama
+#  Parte 6 – Precipitação Mensal: Distribuição Gama
 
 A precipitação mensal é modelada por uma distribuição Gama com parâmetro de forma igual a 4 e taxa igual a 0,02.
 
@@ -662,7 +661,7 @@ $$
 X\sim Gama(4,0,02)
 $$
 
-## 9.1 Probabilidade de chuva superior a 300 mm
+##  Probabilidade de chuva superior a 300 mm
 
 ```{r}
 forma_gama <- 4
@@ -683,7 +682,7 @@ O resultado é aproximadamente 0,1512.
 
 Portanto, a probabilidade é de aproximadamente **15,12%**.
 
-## 9.2 Probabilidade de chuva entre 150 e 250 mm
+##  Probabilidade de chuva entre 150 e 250 mm
 
 ```{r}
 gam_b <- pgamma(
@@ -704,7 +703,7 @@ O resultado é aproximadamente 0,3822.
 
 Portanto, a probabilidade é de aproximadamente **38,22%**.
 
-## 9.3 Percentil 95
+##  Percentil 95
 
 ```{r}
 gam_c <- qgamma(
@@ -718,7 +717,7 @@ gam_c
 
 O resultado é aproximadamente **387,68 mm**.
 
-## 9.4 Esperança e variância
+##  Esperança e variância
 
 Para uma distribuição Gama:
 
@@ -745,7 +744,7 @@ variancia_gam
 
 A esperança é **200 mm** e a variância é **10.000 mm²**.
 
-## 9.5 Simulação de 120 meses
+##  Simulação de 120 meses
 
 ```{r}
 set.seed(123)
@@ -775,7 +774,7 @@ curve(
 )
 ```
 
-# 10. Parte 7 – Análise Integrada com Simulação de Monte Carlo
+#  Parte 7 – Análise Integrada com Simulação de Monte Carlo
 
 A simulação de Monte Carlo permite utilizar números aleatórios para aproximar probabilidades e outros resultados estatísticos.
 
@@ -832,7 +831,7 @@ barplot(
 )
 ```
 
-## 10.1 Importância pedagógica
+##  Importância pedagógica
 
 A simulação permite que os estudantes observem, na prática, o comportamento de um modelo probabilístico.
 
@@ -840,7 +839,7 @@ Em vez de trabalhar somente com fórmulas, o professor pode propor situações n
 
 Essa abordagem favorece a compreensão de conceitos como aleatoriedade, frequência relativa, probabilidade, média e distribuição dos dados.
 
-# 11. Resultados e Discussão
+#  Resultados e Discussão
 
 Os resultados obtidos mostram que diferentes fenômenos podem ser representados por diferentes modelos probabilísticos.
 
@@ -860,7 +859,7 @@ Do ponto de vista pedagógico, essas situações mostram que a Estatística pode
 
 O uso do R amplia essas possibilidades porque permite realizar cálculos rapidamente, produzir gráficos, simular situações e comparar resultados teóricos e experimentais.
 
-# 12. Possibilidades de Aplicação na Educação Básica
+#  Possibilidades de Aplicação na Educação Básica
 
 As situações estudadas podem ser transformadas em atividades investigativas para os estudantes.
 
@@ -876,7 +875,7 @@ As distribuições Weibull e Gama podem ser utilizadas principalmente em ativida
 
 Nesse sentido, o computador não substitui o raciocínio matemático. Ele funciona como uma ferramenta que permite experimentar, visualizar, testar hipóteses e interpretar resultados.
 
-# 13. Conclusão
+#  Conclusão
 
 O desenvolvimento deste relatório permitiu analisar diferentes distribuições de probabilidade a partir de situações relacionadas ao contexto escolar e social.
 
@@ -888,7 +887,7 @@ A utilização de simulações mostrou-se especialmente importante porque possib
 
 No contexto da Educação Básica, o trabalho com situações reais e ferramentas computacionais pode tornar o ensino de Estatística mais investigativo e próximo da realidade dos estudantes.
 
-# 14. Síntese dos Principais Resultados
+#  Síntese dos Principais Resultados
 
 ```{r}
 resultados <- data.frame(
@@ -921,15 +920,25 @@ resultados <- data.frame(
 resultados
 ```
 
-# 15. Referências
+# Referências
 
 BUSSAB, W. O.; MORETTIN, P. A. *Estatística Básica*. Saraiva.
 
 MONTGOMERY, D. C.; RUNGER, G. C. *Estatística Aplicada e Probabilidade para Engenheiros*. LTC.
 
 R CORE TEAM. *R: A Language and Environment for Statistical Computing*. Vienna: R Foundation for Statistical Computing.
+[https://bendeivide.github.io/courses/profmat-probest/normal2026.2/](https://bendeivide.github.io/courses/profmat-probest/normal2026.2/)
 
-# 16. Considerações Finais
+[https://bendeivide.github.io/books/epaec/](https://bendeivide.github.io/books/epaec/)
+
+MEYER, Paul L. Probabilidade: Aplicações à Estatística. 2. ed. Rio de Janeiro: LTC, 1983.
+
+BRASIL. Ministério da Educação. Base Nacional Comum Curricular. Brasília: MEC, 2018.
+
+[https://bendeivide.github.io/books/epaec/](https://bendeivide.github.io/books/epaec/)
+
+
+# Considerações Finais
 
 A realização desta atividade possibilitou integrar conhecimentos de Probabilidade, Estatística, programação e Educação Matemática.
 
